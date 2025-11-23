@@ -13,15 +13,13 @@
             --neon-cyan: #00FFFF;
             --neon-blue: #2979ff;
             --neon-green: #00ff9d;
+            --neon-red: #ff0055;
             --whatsapp-green: #25D366;
             --text-main: #e0f7fa;
             
             /* Variables Geometría */
-            --tank-l: 400px; 
-            --tank-h: 300px;
-            --tank-w: 200px;
-            --wood-h: 25px; 
-            --glass-lid-h: 4px;
+            --tank-l: 400px; --tank-h: 300px; --tank-w: 200px;
+            --wood-h: 25px; --glass-lid-h: 4px;
             
             /* Materiales */
             --glass-border: rgba(0, 255, 255, 0.3);
@@ -44,28 +42,128 @@
             background: radial-gradient(circle at 50% 0%, #0f2540 0%, #020b14 80%);
         }
 
-        /* HEADER */
-        header { padding: 2rem; text-align: center; border-bottom: 1px solid rgba(0,255,255,0.1); }
-        h1 { 
-            letter-spacing: 4px; text-transform: uppercase; font-weight: 900; 
-            font-size: 4rem; color: var(--neon-cyan); margin: 0; font-style: italic;
-            text-shadow: 0 0 30px rgba(0,255,255,0.5); 
+        /* --- HEADER --- */
+        header { 
+            padding: 2rem; text-align: center; 
+            border-bottom: 1px solid rgba(0,255,255,0.1); 
+            position: relative; overflow: hidden; 
         }
-        h1 span { font-weight: 300; color: #fff; font-size: 0.5em; font-style: normal; margin-left: 10px; }
+        
+        .title-container {
+            display: inline-block; position: relative;
+            perspective: 500px;
+        }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            header { padding: 1.5rem 1rem; }
-            main { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem; }
-            .viewer-container { height: 500px; }
+        h1 { 
+            letter-spacing: 2px; text-transform: uppercase; font-weight: 900; 
+            font-size: 4.5rem; margin: 0; font-style: italic;
+            
+            /* DEGRADADO NATURAL (ESTÁTICO): Blanco a Celeste */
+            background-image: linear-gradient(to bottom, #ffffff 30%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            
+            /* Solo animamos la reacción al golpe, quitamos el barrido */
+            animation: text-bite-smooth 10s ease-in-out infinite;
+            
+            text-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
+            position: relative; z-index: 2;
         }
+        
+        h1 span { 
+            font-weight: 300; color: #fff; font-size: 0.5em; font-style: normal; margin-left: 10px; 
+            text-shadow: none; -webkit-text-fill-color: #fff;
+        }
+        
+        /* REACCIÓN AL MORDISCO (Sincronizado con pez rojo 10s) */
+        @keyframes text-bite-smooth {
+            0%, 48% { 
+                transform: scale(1); 
+                text-shadow: 0 0 40px rgba(0, 255, 255, 0.3); /* Sombra Azul Normal */
+            }
+            49% { 
+                transform: scale(0.98); /* Se encoge */
+            }
+            50% { 
+                transform: scale(1.05) rotate(1deg); /* GOLPE */
+                /* El fondo brilla rojo, el texto sigue blanco/celeste */
+                text-shadow: 0 0 100px rgba(255, 0, 85, 1), 0 0 50px rgba(255, 0, 85, 0.8); 
+            }
+            55% {
+                transform: scale(1);
+                text-shadow: 0 0 40px rgba(0, 255, 255, 0.3); /* Regresa suave */
+            }
+            100% { transform: scale(1); }
+        }
+
+        /* --- PECES DEL TÍTULO --- */
+        .title-fish {
+            position: absolute;
+            width: 20px; height: 10px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            border-radius: 40% 50% 50% 40%; 
+            box-shadow: 0 0 10px var(--neon-green); 
+            z-index: 1;
+        }
+        
+        .title-fish::after { 
+            content: ''; position: absolute; right: -8px; top: -1px;
+            width: 0; height: 0;
+            border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+            border-right: 8px solid var(--neon-green); border-left: 0;
+            transform: scaleX(0.8);
+        }
+
+        /* Pez 1 */
+        .tf-1 { animation: orbit-1 8s linear infinite; }
+        
+        /* Pez 2 */
+        .tf-2 { 
+            animation: orbit-2 12s linear infinite; 
+            border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); 
+        }
+        .tf-2::after { border-right-color: var(--neon-cyan); }
+
+        /* Pez 3 (Rojo Atacante - 10s) */
+        .tf-3 { 
+            animation: bite-attack 10s ease-in-out infinite; 
+            border-color: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); 
+        }
+        .tf-3::after { border-right-color: var(--neon-red); }
+
+
+        /* Trayectorias Header */
+        @keyframes orbit-1 {
+            0% { transform: translate(-180px, 20px) rotate(0deg); opacity:0; }
+            10% { opacity: 1; }
+            45% { transform: translate(180px, -20px) rotate(0deg); }
+            50% { transform: translate(180px, -20px) rotate(180deg); }
+            95% { transform: translate(-180px, 20px) rotate(180deg); opacity: 1; }
+            100% { transform: translate(-180px, 20px) rotate(180deg); opacity: 0; }
+        }
+        @keyframes orbit-2 {
+            0% { transform: translate(140px, 40px) rotate(180deg); }
+            50% { transform: translate(-140px, -10px) rotate(180deg); }
+            51% { transform: translate(-140px, -10px) rotate(0deg); }
+            100% { transform: translate(140px, 40px) rotate(0deg); }
+        }
+        @keyframes bite-attack {
+            0% { top: -60px; right: -80px; transform: rotate(45deg); opacity: 0; }
+            30% { opacity: 1; }
+            45% { top: 0px; right: 0px; transform: rotate(45deg) scale(1); } /* Se acerca lento */
+            50% { top: 15px; right: 25px; transform: rotate(30deg) scale(1.3); } /* MUERDE */
+            55% { top: 20px; right: 30px; transform: rotate(135deg) scale(1); } /* Gira */
+            100% { top: 150px; right: 150px; transform: rotate(135deg); opacity: 0; } /* Se va */
+        }
+
+        @media (max-width: 768px) { h1 { font-size: 2.8rem; } }
 
         /* GRID PRINCIPAL */
         main {
             flex: 1; display: grid; grid-template-columns: 480px 1fr; gap: 4rem;
             padding: 3rem; max-width: 1900px; margin: 0 auto; width: 100%;
         }
+        @media (max-width: 1200px) { main { grid-template-columns: 1fr; } }
 
         /* PANEL LATERAL */
         .panel {
@@ -251,20 +349,6 @@
 
         /* --- PECES 3D (CSS 2.5D) --- */
         .aquarium-content { position: absolute; top: 0; left: 0; width: 0; height: 0; transform-style: preserve-3d; pointer-events: none; }
-        
-        /* Animaciones Globales */
-        @keyframes swim-path {
-            0%   { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
-            49%  { transform: translateX(calc(var(--tank-l) * 0.30))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
-            50%  { transform: translateX(calc(var(--tank-l) * 0.30))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
-            99%  { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
-            100% { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
-        }
-        @keyframes float-y { 0%, 100% { margin-top: -5px; } 50% { margin-top: 5px; } }
-        @keyframes tail-wag { from { transform: rotateY(20deg); } to { transform: rotateY(-20deg); } }
-        @keyframes fin-flutter { from { transform: translateZ(2px) rotateY(30deg); } to { transform: translateZ(2px) rotateY(60deg); } }
-
-        /* Wrapper */
         .fish-wrapper { position: absolute; transform-style: preserve-3d; animation: swim-path 20s linear infinite, float-y 4s ease-in-out infinite; }
         .fish-model { position: relative; transform-style: preserve-3d; }
         .fish-part { position: absolute; backface-visibility: visible; }
@@ -279,7 +363,7 @@
             width: 34px; height: 24px; 
             background: var(--fish-body-grad); 
             border-radius: 50% 50% 40% 40%; /* Forma de huevo */
-            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2); /* Sombra interna para pseudo-volumen */
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2); 
         }
         .gold .tail {
             width: 28px; height: 32px; 
@@ -301,6 +385,18 @@
         .gold .pectoral.left { transform: translateZ(2px) rotateY(45deg); }
         .gold .pectoral.right { transform: translateZ(-2px) rotateY(-45deg); }
 
+        /* Animaciones Globales */
+        @keyframes swim-path {
+            0%   { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+            49%  { transform: translateX(calc(var(--tank-l) * 0.30))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+            50%  { transform: translateX(calc(var(--tank-l) * 0.30))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
+            99%  { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
+            100% { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+        }
+        @keyframes float-y { 0%, 100% { margin-top: -5px; } 50% { margin-top: 5px; } }
+        @keyframes tail-wag { from { transform: rotateY(20deg); } to { transform: rotateY(-20deg); } }
+        @keyframes fin-flutter { from { transform: translateZ(2px) rotateY(30deg); } to { transform: translateZ(2px) rotateY(60deg); } }
+
         /* FOOTER */
         .shop-section { padding: 2rem; background: #050f1e; border-top: 1px solid rgba(255,255,255,0.05); margin-top: auto; }
         .shop-title { margin-bottom: 1.5rem; padding-left: 2rem; color: var(--neon-cyan); font-size: 1.5rem; border-left: 4px solid var(--neon-cyan); text-transform: uppercase; }
@@ -319,7 +415,13 @@
     <div class="bg-animation"></div>
 
     <header>
-        <h1>Alekiu <span>FISH</span></h1>
+        <div class="title-container">
+            <h1>Alekiu <span>FISH</span></h1>
+            <!-- Cardumen de peces decorativos -->
+            <div class="title-fish tf-1"></div>
+            <div class="title-fish tf-2"></div>
+            <div class="title-fish tf-3"></div>
+        </div>
     </header>
 
     <main>
@@ -626,14 +728,13 @@
 
         function generateLife(liters) {
             let targetCount;
-            if(liters < 30) targetCount = 1;
-            else if(liters < 50) targetCount = 2;
-            else targetCount = Math.min(3 + Math.floor(liters / 15), 15);
+            if(liters < 60) targetCount = Math.floor(Math.random() * 3) + 1; // 1 a 3
+            else if(liters <= 150) targetCount = Math.floor(Math.random() * 3) + 3; // 3 a 5
+            else targetCount = Math.floor(Math.random() * 3) + 5; // 5 a 7
 
             if (lifeContainer.childElementCount === targetCount) return;
 
             lifeContainer.innerHTML = '';
-            // Colores Betta (Celeste, Rojo, Blanco)
             const colorsBetta = ['#00FFFF', '#FF0000', '#FFFFFF'];
             const colorsGoldfish = [
                 { b: 'linear-gradient(to right, #FFD700, #ffffff)', t: '#FFD700' }, 
@@ -667,7 +768,7 @@
                     let p = colorsGoldfish[Math.floor(Math.random() * colorsGoldfish.length)];
                     model.style.setProperty('--fish-body-grad', p.b);
                     model.style.setProperty('--fish-tail-color', p.t);
-                    // Goldfish 2D Simplificado
+                    // Goldfish 2D Simplificado (Gordito)
                     model.innerHTML = `<div class="fish-part body"></div><div class="fish-part tail"></div><div class="fish-part dorsal"></div><div class="fish-part pectoral left"></div><div class="fish-part pectoral right"></div>`;
                 }
                 wrapper.appendChild(model);
@@ -687,10 +788,8 @@
 
         const viewer = document.getElementById('viewer'), scene = document.getElementById('scene');
         let isDragging = false, startX, startY, rotX = -15, rotY = 35;
-        
         const startDrag = (x, y) => { isDragging = true; startX = x; startY = y; viewer.style.cursor = 'grabbing'; };
         const stopDrag = () => { isDragging = false; viewer.style.cursor = 'grab'; };
-        
         const moveDrag = (x, y) => {
             if(!isDragging) return;
             let dX = x - startX, dY = y - startY;
@@ -699,7 +798,7 @@
             scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
             startX = x; startY = y;
         };
-
+        
         viewer.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
         window.addEventListener('mouseup', stopDrag);
         window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
