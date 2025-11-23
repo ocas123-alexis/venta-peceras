@@ -17,9 +17,9 @@
             --text-main: #e0f7fa;
             
             /* Variables Geometría */
-            --tank-l: 300px; 
-            --tank-h: 200px;
-            --tank-w: 150px;
+            --tank-l: 400px; 
+            --tank-h: 300px;
+            --tank-w: 200px;
             --wood-h: 25px; 
             --glass-lid-h: 4px;
             
@@ -53,19 +53,18 @@
         }
         h1 span { font-weight: 300; color: #fff; font-size: 0.5em; font-style: normal; margin-left: 10px; }
 
-        /* Responsive Header Font */
+        /* Responsive */
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
             header { padding: 1.5rem 1rem; }
+            main { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem; }
+            .viewer-container { height: 500px; }
         }
 
         /* GRID PRINCIPAL */
         main {
             flex: 1; display: grid; grid-template-columns: 480px 1fr; gap: 4rem;
             padding: 3rem; max-width: 1900px; margin: 0 auto; width: 100%;
-        }
-        @media (max-width: 1200px) { 
-            main { grid-template-columns: 1fr; gap: 2rem; padding: 1.5rem; } 
         }
 
         /* PANEL LATERAL */
@@ -171,18 +170,12 @@
             border-radius: 16px; overflow: hidden; cursor: grab;
             display: flex; align-items: center; justify-content: center;
             perspective: 2000px;
-            /* IMPORTANTE PARA MÓVIL: Evita que el navegador haga scroll al tocar aquí */
             touch-action: none; 
         }
         .viewer-container:active { cursor: grabbing; }
         .instruction-overlay {
             position: absolute; bottom: 40px; width: 100%; text-align: center;
             color: rgba(255,255,255,0.4); font-size: 1.1rem; pointer-events: none; text-transform: uppercase; letter-spacing: 3px;
-        }
-
-        @media (max-width: 768px) {
-            .viewer-container { height: 500px; }
-            .instruction-overlay { font-size: 0.9rem; bottom: 20px; }
         }
 
         /* ESCENA 3D */
@@ -256,29 +249,57 @@
 
         .metal-mode .face { border: 8px solid #bdc3c7; }
 
-        /* --- PECES 3D --- */
+        /* --- PECES 3D (CSS 2.5D) --- */
         .aquarium-content { position: absolute; top: 0; left: 0; width: 0; height: 0; transform-style: preserve-3d; pointer-events: none; }
-        .fish-wrapper { position: absolute; transform-style: preserve-3d; animation: swim-path 20s linear infinite, float-y 6s ease-in-out infinite; }
+        
+        /* Animaciones Globales */
+        @keyframes swim-path {
+            0%   { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+            49%  { transform: translateX(calc(var(--tank-l) * 0.30))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+            50%  { transform: translateX(calc(var(--tank-l) * 0.30))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
+            99%  { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
+            100% { transform: translateX(calc(var(--tank-l) * -0.30)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+        }
+        @keyframes float-y { 0%, 100% { margin-top: -5px; } 50% { margin-top: 5px; } }
+        @keyframes tail-wag { from { transform: rotateY(20deg); } to { transform: rotateY(-20deg); } }
+        @keyframes fin-flutter { from { transform: translateZ(2px) rotateY(30deg); } to { transform: translateZ(2px) rotateY(60deg); } }
+
+        /* Wrapper */
+        .fish-wrapper { position: absolute; transform-style: preserve-3d; animation: swim-path 20s linear infinite, float-y 4s ease-in-out infinite; }
         .fish-model { position: relative; transform-style: preserve-3d; }
         .fish-part { position: absolute; backface-visibility: visible; }
 
+        /* --- BETTA (Plano 2.5D) --- */
         .betta .body { width: 30px; height: 12px; background: var(--fish-color); border-radius: 10px; box-shadow: 0 0 8px var(--fish-color); }
         .betta .tail { width: 45px; height: 35px; background: linear-gradient(90deg, var(--fish-color), transparent); top: -10px; left: -38px; border-radius: 50% 0 0 50%; opacity: 0.9; transform-origin: right center; animation: tail-wag 0.8s ease-in-out infinite alternate; }
         .betta .fin { width: 15px; height: 10px; background: var(--fish-color); top: 8px; left: 5px; transform: rotateX(45deg); opacity: 0.7; }
 
-        .gold .body { width: 34px; height: 24px; background: var(--fish-body-grad); border-radius: 50% 50% 40% 40%; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); }
-        .gold .tail { width: 25px; height: 30px; background: radial-gradient(circle at right, var(--fish-tail-color), transparent); top: -3px; left: -20px; border-radius: 50% 0 0 50%; opacity: 0.8; transform: rotateY(20deg); transform-origin: right center; animation: tail-wag 0.6s linear infinite alternate; }
-        .gold .dorsal { width: 15px; height: 10px; background: var(--fish-tail-color); top: -8px; left: 10px; border-radius: 50% 50% 0 0; opacity: 0.8; }
-
-        @keyframes swim-path {
-            0%   { transform: translateX(calc(var(--tank-l) * -0.35)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
-            49%  { transform: translateX(calc(var(--tank-l) * 0.35))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
-            50%  { transform: translateX(calc(var(--tank-l) * 0.35))  translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
-            99%  { transform: translateX(calc(var(--tank-l) * -0.35)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(180deg); }
-            100% { transform: translateX(calc(var(--tank-l) * -0.35)) translateY(calc(var(--tank-h) * var(--ratio-y))) translateZ(calc(var(--tank-w) * var(--ratio-z))) rotateY(0deg); }
+        /* --- GOLDFISH (Planar 2D Gordito) --- */
+        .gold .body { 
+            width: 34px; height: 24px; 
+            background: var(--fish-body-grad); 
+            border-radius: 50% 50% 40% 40%; /* Forma de huevo */
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2); /* Sombra interna para pseudo-volumen */
         }
-        @keyframes float-y { 0%, 100% { margin-top: -8px; } 50% { margin-top: 8px; } }
-        @keyframes tail-wag { from { transform: rotateY(25deg); } to { transform: rotateY(-25deg); } }
+        .gold .tail {
+            width: 28px; height: 32px; 
+            background: radial-gradient(circle at right, var(--fish-tail-color), transparent); 
+            position: absolute; top: -4px; left: -20px; 
+            border-radius: 50% 0 0 50%; opacity: 0.9; 
+            transform-origin: right center; animation: tail-wag 0.5s ease-in-out infinite alternate; 
+        }
+        .gold .dorsal {
+            width: 16px; height: 10px; background: var(--fish-tail-color);
+            position: absolute; top: -8px; left: 10px; 
+            border-radius: 50% 50% 0 0; opacity: 0.8; transform: translateZ(0);
+        }
+        .gold .pectoral {
+            width: 10px; height: 6px; background: var(--fish-tail-color);
+            position: absolute; top: 14px; left: 18px; opacity: 0.8;
+            animation: fin-flutter 0.2s linear infinite alternate;
+        }
+        .gold .pectoral.left { transform: translateZ(2px) rotateY(45deg); }
+        .gold .pectoral.right { transform: translateZ(-2px) rotateY(-45deg); }
 
         /* FOOTER */
         .shop-section { padding: 2rem; background: #050f1e; border-top: 1px solid rgba(255,255,255,0.05); margin-top: auto; }
@@ -439,7 +460,6 @@
     </section>
 
     <script>
-        // Variables Globales
         let currentScale = 6;
         let currentFinish = 'rimless';
         let cart = [];
@@ -457,10 +477,10 @@
         const checkFilter = document.getElementById('checkFilter'), filterPriceDisplay = document.getElementById('filterPriceDisplay');
         const recIcon = document.getElementById('recIcon'), recTitle = document.getElementById('recTitle'), recDesc = document.getElementById('recDesc');
 
-        // Función para determinar escala en móvil
+        // Scale detection
         function determineScale() {
             currentScale = window.innerWidth < 768 ? 2.8 : 6;
-            updateTank(); // Recalcular visualización
+            updateTank();
         }
         window.addEventListener('resize', determineScale);
 
@@ -481,7 +501,6 @@
             recDesc.innerText = filterData.desc;
             filterPriceDisplay.innerText = filterData.price;
 
-            // Visuales
             woodLidGroup.classList.remove('visible');
             glassLidGroup.classList.remove('visible');
             woodBaseGroup.classList.remove('visible');
@@ -515,6 +534,7 @@
             else basePrice = 300 + ((liters - 200) * 2);
 
             let finishPrice = (currentFinish === 'metal') ? 50 : 0;
+            let finishName = (currentFinish === 'metal') ? 'Marco Aluminio' : 'Sin Marco';
             
             let lidPrice = 0;
             let lidName = 'Sin Tapa';
@@ -525,7 +545,7 @@
 
             let html = `
                 <div class="summary-item"><span>Pecera Base (${Math.round(liters)}L)</span><span>S/ ${basePrice.toFixed(2)}</span></div>
-                <div class="summary-item"><span>${(currentFinish === 'metal') ? 'Marco Aluminio' : 'Sin Marco'}</span><span>S/ ${finishPrice.toFixed(2)}</span></div>
+                <div class="summary-item"><span>${finishName}</span><span>S/ ${finishPrice.toFixed(2)}</span></div>
                 <div class="summary-item"><span>${lidName}</span><span>S/ ${lidPrice.toFixed(2)}</span></div>
             `;
 
@@ -545,14 +565,13 @@
             totalPriceEl.innerText = "S/ " + currentTotal.toFixed(2);
         }
 
-        // --- WhatsApp Function (SIN EMOJIS EN MENSAJE) ---
+        // WHATSAPP SIN EMOJIS
         function sendToWhatsapp() {
             let l = parseFloat(inpL.value);
             let h = parseFloat(inpH.value);
             let w = parseFloat(inpW.value);
             let liters = Math.round((l * h * w) / 1000);
             
-            // Recalcular precios para mensaje
             let basePrice = 0;
             if (liters <= 30) basePrice = 50;
             else if (liters <= 50) basePrice = 70;
@@ -571,9 +590,9 @@
             if (selLid.value === 'wood') { lidPrice = 100; lidName = 'Tapa de Madera 3D'; }
             if (selLid.value === 'glass') { lidPrice = 10; lidName = 'Tapa de Vidrio 3D'; }
 
+            let baseCost = checkBase.checked ? 150 : 0;
             let filterCost = checkFilter.checked ? parseInt(filterPriceDisplay.innerText) : 0;
 
-            // Mensaje LIMPIO sin emojis
             let msg = `*Hola Alekiu FISH! Quiero hacer realidad este acuario:*\n\n`;
             msg += `*DETALLES DE LA COTIZACION:*\n\n`;
             
@@ -606,11 +625,16 @@
         }
 
         function generateLife(liters) {
-            let targetCount = Math.min(3 + Math.floor(liters / 20), 25);
+            let targetCount;
+            if(liters < 30) targetCount = 1;
+            else if(liters < 50) targetCount = 2;
+            else targetCount = Math.min(3 + Math.floor(liters / 15), 15);
+
             if (lifeContainer.childElementCount === targetCount) return;
 
             lifeContainer.innerHTML = '';
-            const colorsBetta = ['#00FFFF', '#1a237e', '#212121', '#F5F5F5', '#FF00FF'];
+            // Colores Betta (Celeste, Rojo, Blanco)
+            const colorsBetta = ['#00FFFF', '#FF0000', '#FFFFFF'];
             const colorsGoldfish = [
                 { b: 'linear-gradient(to right, #FFD700, #ffffff)', t: '#FFD700' }, 
                 { b: 'linear-gradient(to right, #FFA500, #ffffff)', t: '#FFA500' }, 
@@ -643,7 +667,8 @@
                     let p = colorsGoldfish[Math.floor(Math.random() * colorsGoldfish.length)];
                     model.style.setProperty('--fish-body-grad', p.b);
                     model.style.setProperty('--fish-tail-color', p.t);
-                    model.innerHTML = `<div class="fish-part body"></div><div class="fish-part tail"></div><div class="fish-part dorsal"></div>`;
+                    // Goldfish 2D Simplificado
+                    model.innerHTML = `<div class="fish-part body"></div><div class="fish-part tail"></div><div class="fish-part dorsal"></div><div class="fish-part pectoral left"></div><div class="fish-part pectoral right"></div>`;
                 }
                 wrapper.appendChild(model);
                 lifeContainer.appendChild(wrapper);
@@ -679,11 +704,11 @@
         window.addEventListener('mouseup', stopDrag);
         window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
         
-        // Soporte Touch Móvil (con prevención de scroll)
+        // Touch Mobile
         viewer.addEventListener('touchstart', e => startDrag(e.touches[0].clientX, e.touches[0].clientY), {passive: false});
         window.addEventListener('touchend', stopDrag);
         viewer.addEventListener('touchmove', e => {
-            if(isDragging) e.preventDefault(); // Bloquear scroll de página al rotar
+            if(isDragging) e.preventDefault();
             moveDrag(e.touches[0].clientX, e.touches[0].clientY);
         }, {passive: false});
 
@@ -703,7 +728,6 @@
                 </div>`;
         });
 
-        // Iniciar
         determineScale();
         updateTank();
     </script>
